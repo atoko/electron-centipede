@@ -1,0 +1,26 @@
+html,
+body {
+  width: 100%;
+  height: 100%;
+  margin: 0;
+  padding: 0;
+}
+
+body {
+  justify-content: center;
+  align-items: center;
+  font-family: sans-serif;
+  color: #525252;
+}
+
+.game {
+  width: 1000px;
+  height: 1000px;
+}
+#state {
+  position: absolute;
+  width: 100%;
+  bottom: 0vh;
+  height: 30vh;
+  border: 1px solid black;
+}
