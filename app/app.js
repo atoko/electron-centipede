@@ -60,24 +60,40 @@
 /******/ 	__webpack_require__.p = "";
 /******/
 /******/ 	// Load entry module and return exports
-/******/ 	return __webpack_require__(__webpack_require__.s = 5);
+/******/ 	return __webpack_require__(__webpack_require__.s = 6);
 /******/ })
 /************************************************************************/
 /******/ ([
-/* 0 */,
-/* 1 */,
-/* 2 */,
-/* 3 */,
-/* 4 */,
-/* 5 */
+/* 0 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
 
 
-__webpack_require__(6);
+Object.defineProperty(exports, "__esModule", {
+  value: true
+});
+exports.Y_HEIGHT = exports.X_WIDTH = void 0;
+const X_WIDTH = 64;
+exports.X_WIDTH = X_WIDTH;
+const Y_HEIGHT = 64;
+exports.Y_HEIGHT = Y_HEIGHT;
 
-var _engine = _interopRequireDefault(__webpack_require__(11));
+/***/ }),
+/* 1 */,
+/* 2 */,
+/* 3 */,
+/* 4 */,
+/* 5 */,
+/* 6 */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+
+__webpack_require__(7);
+
+var _engine = _interopRequireDefault(__webpack_require__(12));
 
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
@@ -95,12 +111,14 @@ let asGrid = (fn, x, y) => {
 let render = state => {
   document.querySelector("#state").innerHTML = JSON.stringify(state);
   ctx.clearRect(0, 0, 800, 600); //Make grid
-  // let cells = [] 
-  // for(let x = 0; x < 64; x++) { 
-  //   for(let y = 0; y < 64; y++) {
-  //         asGrid("strokeRect", x, y);
-  //   }
-  // }
+
+  let cells = [];
+
+  for (let x = 0; x < 64; x++) {
+    for (let y = 0; y < 64; y++) {
+      asGrid("strokeRect", x, y);
+    }
+  }
 
   ctx.fillStyle = "red";
   state.bugs.forEach(bug => {
@@ -151,13 +169,13 @@ let bootstrap = (() => {
 })();
 
 /***/ }),
-/* 6 */
+/* 7 */
 /***/ (function(module, exports, __webpack_require__) {
 
 // style-loader: Adds some css to the DOM by adding a <style> tag
 
 // load the styles
-var content = __webpack_require__(7);
+var content = __webpack_require__(8);
 if(typeof content === 'string') content = [[module.i, content, '']];
 // Prepare cssTransformation
 var transform;
@@ -165,7 +183,7 @@ var transform;
 var options = {"hmr":true}
 options.transform = transform
 // add the styles to the DOM
-var update = __webpack_require__(9)(content, options);
+var update = __webpack_require__(10)(content, options);
 if(content.locals) module.exports = content.locals;
 // Hot Module Replacement
 if(false) {
@@ -182,10 +200,10 @@ if(false) {
 }
 
 /***/ }),
-/* 7 */
+/* 8 */
 /***/ (function(module, exports, __webpack_require__) {
 
-exports = module.exports = __webpack_require__(8)(false);
+exports = module.exports = __webpack_require__(9)(false);
 // imports
 
 
@@ -196,7 +214,7 @@ exports.push([module.i, "html,\nbody {\n  width: 100%;\n  height: 100%;\n  margi
 
 
 /***/ }),
-/* 8 */
+/* 9 */
 /***/ (function(module, exports) {
 
 /*
@@ -278,7 +296,7 @@ function toComment(sourceMap) {
 
 
 /***/ }),
-/* 9 */
+/* 10 */
 /***/ (function(module, exports, __webpack_require__) {
 
 /*
@@ -334,7 +352,7 @@ var singleton = null;
 var	singletonCounter = 0;
 var	stylesInsertedAtTop = [];
 
-var	fixUrls = __webpack_require__(10);
+var	fixUrls = __webpack_require__(11);
 
 module.exports = function(list, options) {
 	if (typeof DEBUG !== "undefined" && DEBUG) {
@@ -650,7 +668,7 @@ function updateLink (link, options, obj) {
 
 
 /***/ }),
-/* 10 */
+/* 11 */
 /***/ (function(module, exports) {
 
 
@@ -745,7 +763,7 @@ module.exports = function (css) {
 
 
 /***/ }),
-/* 11 */
+/* 12 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -756,9 +774,9 @@ Object.defineProperty(exports, "__esModule", {
 });
 exports.default = void 0;
 
-var _bug = _interopRequireDefault(__webpack_require__(12));
+var _bug = _interopRequireDefault(__webpack_require__(13));
 
-var _constants = __webpack_require__(13);
+var _constants = __webpack_require__(0);
 
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
@@ -801,12 +819,35 @@ let wallReducer = (state, action) => {
   }
 };
 
+let shipReducer = (state, action) => {
+  switch (action.type) {
+    case "NEW_GAME":
+      return {
+        bugs: [],
+        walls: [],
+        ship: shipReducer(state, action)
+      };
+
+    case "SPAWN_BUG":
+    case "GAME_TICK":
+      let bugs = bugReducer(state, action);
+      let walls = wallReducer(state, action);
+      return Object.assign({}, state, {
+        bugs,
+        walls
+      });
+  }
+
+  return state;
+};
+
 let grid = (state = null, action) => {
   switch (action.type) {
     case "NEW_GAME":
       return {
         bugs: [],
-        walls: []
+        walls: [],
+        ship: shipReducer(state, action)
       };
 
     case "SPAWN_BUG":
@@ -827,12 +868,6 @@ var _default = centipede;
 exports.default = _default;
 
 /***/ }),
-/* 12 */
-/***/ (function(module, exports) {
-
-throw new Error("Module build failed: SyntaxError: C:\\Users\\atoko\\Source\\js\\centipede\\src\\game\\bug.reducer.js: Unexpected token (48:7)\n\n  46 | \t\t\treturn state;\n  47 | \t\tcase \"GAME_TICK\":\n> 48 | \t\t\tif ()\n     | \t\t\t    ^\n  49 | \t\t\tlet newHp = hp;\n  50 | \t\t\tif (Math.random() * 1000 > 991) {\n  51 | \t\t\t\t//newHp -= 1;\n    at Parser.raise (C:\\Users\\atoko\\Source\\js\\centipede\\node_modules\\@babel\\parser\\lib\\index.js:3861:15)\n    at Parser.unexpected (C:\\Users\\atoko\\Source\\js\\centipede\\node_modules\\@babel\\parser\\lib\\index.js:5190:16)\n    at Parser.parseExprAtom (C:\\Users\\atoko\\Source\\js\\centipede\\node_modules\\@babel\\parser\\lib\\index.js:6268:20)\n    at Parser.parseExprSubscripts (C:\\Users\\atoko\\Source\\js\\centipede\\node_modules\\@babel\\parser\\lib\\index.js:5868:21)\n    at Parser.parseMaybeUnary (C:\\Users\\atoko\\Source\\js\\centipede\\node_modules\\@babel\\parser\\lib\\index.js:5847:21)\n    at Parser.parseExprOps (C:\\Users\\atoko\\Source\\js\\centipede\\node_modules\\@babel\\parser\\lib\\index.js:5754:21)\n    at Parser.parseMaybeConditional (C:\\Users\\atoko\\Source\\js\\centipede\\node_modules\\@babel\\parser\\lib\\index.js:5726:21)\n    at Parser.parseMaybeAssign (C:\\Users\\atoko\\Source\\js\\centipede\\node_modules\\@babel\\parser\\lib\\index.js:5673:21)\n    at Parser.parseExpression (C:\\Users\\atoko\\Source\\js\\centipede\\node_modules\\@babel\\parser\\lib\\index.js:5626:21)\n    at Parser.parseParenExpression (C:\\Users\\atoko\\Source\\js\\centipede\\node_modules\\@babel\\parser\\lib\\index.js:6363:20)\n    at Parser.parseIfStatement (C:\\Users\\atoko\\Source\\js\\centipede\\node_modules\\@babel\\parser\\lib\\index.js:7417:22)\n    at Parser.parseStatementContent (C:\\Users\\atoko\\Source\\js\\centipede\\node_modules\\@babel\\parser\\lib\\index.js:7116:21)\n    at Parser.parseStatement (C:\\Users\\atoko\\Source\\js\\centipede\\node_modules\\@babel\\parser\\lib\\index.js:7085:17)\n    at Parser.parseSwitchStatement (C:\\Users\\atoko\\Source\\js\\centipede\\node_modules\\@babel\\parser\\lib\\index.js:7470:36)\n    at Parser.parseStatementContent (C:\\Users\\atoko\\Source\\js\\centipede\\node_modules\\@babel\\parser\\lib\\index.js:7122:21)\n    at Parser.parseStatement (C:\\Users\\atoko\\Source\\js\\centipede\\node_modules\\@babel\\parser\\lib\\index.js:7085:17)\n    at Parser.parseBlockOrModuleBlockBody (C:\\Users\\atoko\\Source\\js\\centipede\\node_modules\\@babel\\parser\\lib\\index.js:7632:23)\n    at Parser.parseBlockBody (C:\\Users\\atoko\\Source\\js\\centipede\\node_modules\\@babel\\parser\\lib\\index.js:7619:10)\n    at Parser.parseBlock (C:\\Users\\atoko\\Source\\js\\centipede\\node_modules\\@babel\\parser\\lib\\index.js:7608:10)\n    at Parser.parseFunctionBody (C:\\Users\\atoko\\Source\\js\\centipede\\node_modules\\@babel\\parser\\lib\\index.js:6865:24)\n    at Parser.parseArrowExpression (C:\\Users\\atoko\\Source\\js\\centipede\\node_modules\\@babel\\parser\\lib\\index.js:6817:10)\n    at Parser.parseParenAndDistinguishExpression (C:\\Users\\atoko\\Source\\js\\centipede\\node_modules\\@babel\\parser\\lib\\index.js:6433:12)\n    at Parser.parseExprAtom (C:\\Users\\atoko\\Source\\js\\centipede\\node_modules\\@babel\\parser\\lib\\index.js:6224:21)\n    at Parser.parseExprSubscripts (C:\\Users\\atoko\\Source\\js\\centipede\\node_modules\\@babel\\parser\\lib\\index.js:5868:21)\n    at Parser.parseMaybeUnary (C:\\Users\\atoko\\Source\\js\\centipede\\node_modules\\@babel\\parser\\lib\\index.js:5847:21)\n    at Parser.parseExprOps (C:\\Users\\atoko\\Source\\js\\centipede\\node_modules\\@babel\\parser\\lib\\index.js:5754:21)\n    at Parser.parseMaybeConditional (C:\\Users\\atoko\\Source\\js\\centipede\\node_modules\\@babel\\parser\\lib\\index.js:5726:21)\n    at Parser.parseMaybeAssign (C:\\Users\\atoko\\Source\\js\\centipede\\node_modules\\@babel\\parser\\lib\\index.js:5673:21)\n    at Parser.parseVar (C:\\Users\\atoko\\Source\\js\\centipede\\node_modules\\@babel\\parser\\lib\\index.js:7701:26)\n    at Parser.parseVarStatement (C:\\Users\\atoko\\Source\\js\\centipede\\node_modules\\@babel\\parser\\lib\\index.js:7531:10)");
-
-/***/ }),
 /* 13 */
 /***/ (function(module, exports, __webpack_require__) {
 
@@ -842,11 +877,79 @@ throw new Error("Module build failed: SyntaxError: C:\\Users\\atoko\\Source\\js\
 Object.defineProperty(exports, "__esModule", {
   value: true
 });
-exports.Y_HEIGHT = exports.X_WIDTH = void 0;
-const X_WIDTH = 64;
-exports.X_WIDTH = X_WIDTH;
-const Y_HEIGHT = 64;
-exports.Y_HEIGHT = Y_HEIGHT;
+exports.default = void 0;
+
+var _constants = __webpack_require__(0);
+
+let defaultBug = () => ({
+  x: 0,
+  y: 0,
+  forward: true,
+  hp: 5,
+  gc: false
+});
+
+let bug = (state = defaultBug(), action, walls) => {
+  const {
+    x,
+    y,
+    forward,
+    hp
+  } = state;
+
+  const move = () => {
+    if (hp === 0) {
+      return {
+        x,
+        y,
+        forward
+      };
+    }
+
+    let newX = forward ? x + 1 : x - 1;
+    let newY = y;
+    let newForward = forward; //Implement snaking pattern
+
+    let collision = walls.some(w => w.x === newX && w.y === newY);
+
+    if (collision || newX == _constants.X_WIDTH || newX === 0) {
+      newX = x;
+      newY = y + 1;
+      newForward = !forward;
+    } //Go back to top if reached the end
+
+
+    if (newY === _constants.Y_HEIGHT) {
+      newY = 0;
+    }
+
+    return {
+      x: newX,
+      y: newY,
+      forward: newForward
+    };
+  };
+
+  switch (action.type) {
+    case "SPAWN_BUG":
+      return state;
+
+    case "GAME_TICK":
+      let newHp = hp;
+
+      if (Math.random() * 1000 > 991) {//newHp -= 1;
+      }
+
+      ;
+      return Object.assign({}, move(), {
+        hp: newHp,
+        gc: hp === 0
+      });
+  }
+};
+
+var _default = bug;
+exports.default = _default;
 
 /***/ })
 /******/ ]);
