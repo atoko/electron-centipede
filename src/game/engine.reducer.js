@@ -28,25 +28,12 @@ let wallReducer = (state, action) => {
 	}
 }
 
-let shipReducer = (state, action) => {
-	let { ship } = state;
-	switch(action.type) {
-		case "NEW_GAME":			
-			return { 
-				x: 32, 
-				y: 63, 
-			};
-	}
-	return ship;
-}
-
 let grid = (state = null, action) => {
 	switch(action.type) {
 		case "NEW_GAME":			
 			return { 
 				bugs: [], 
-				walls: [], 
-				ship: shipReducer(state, action) 
+				walls: [] 
 			};
 		case "SPAWN_BUG":
 		case "GAME_TICK":
