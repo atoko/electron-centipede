@@ -1,5 +1,6 @@
 import "./stylesheets/main.css";
 import gameEngine from "./game/engine.reducer";
+// why not import ./game/constants.js and refer to those consts?
 
 const X_WIDTH = 800;
 const Y_WIDTH = 600;
